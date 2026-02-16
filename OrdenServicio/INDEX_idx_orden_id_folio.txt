@@ -1,0 +1,2 @@
+CREATE INDEX idx_orden_id_folio
+ON taordenservicio (idOrden, folio);

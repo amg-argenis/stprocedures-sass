@@ -1,0 +1,40 @@
+QUERYS IMPORTANTES PARA EL SAAS:
+Trigger para cuando se crea una nueva orden. Este trigger lo que hace es generar
+un nuevo folio. Estos folios no colisionan aun cuando hay inserts simultaneos.
+
+Tabla de secuencias:
+CREATE TABLE folio_sequence (
+    nombre VARCHAR(50) PRIMARY KEY,
+    valor BIGINT NOT NULL
+);
+
+Insert inicia:
+INSERT INTO folio_sequence (nombre, valor)
+VALUES ('ORDEN_SERVICIO', 0);
+
+
+Trigger:
+DELIMITER $$
+
+CREATE TRIGGER trg_folio_orden_servicio
+BEFORE INSERT ON orden_servicio
+FOR EACH ROW
+BEGIN
+    DECLARE next_folio BIGINT;
+
+    -- Incrementa el contador de forma atómica
+    UPDATE folio_sequence
+    SET valor = valor + 1
+    WHERE nombre = 'ORDEN_SERVICIO';
+
+    -- Obtiene el nuevo valor
+    SELECT valor
+    INTO next_folio
+    FROM folio_sequence
+    WHERE nombre = 'ORDEN_SERVICIO';
+
+    -- Asigna el folio
+    SET NEW.folio = CONCAT('ORD-', LPAD(next_folio, 9, '0'));
+END$$
+
+DELIMITER ;

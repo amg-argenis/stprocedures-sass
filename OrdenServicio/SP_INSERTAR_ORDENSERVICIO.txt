@@ -1,0 +1,76 @@
+DELIMITER $$
+
+CREATE OR REPLACE PROCEDURE SP_INSERTAR_ORDENSERVICIO(
+    -- IN
+    IN  pa_idorden VARCHAR(255),
+    IN  pa_clienteid VARCHAR(255),
+    IN  pa_fechaingreso VARCHAR(255),
+    IN  pa_estado VARCHAR(100),
+    IN  pa_totalprendas INT,
+    IN  pa_observaciones VARCHAR(255),
+    IN  pa_tenantid VARCHAR(255),
+  
+    -- OUT
+    OUT pa_codigobd INT,
+    OUT pa_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_error_message TEXT;
+
+    -- Handler de error ? rollback
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error_message = MESSAGE_TEXT;
+
+        SET pa_codigobd = 1;
+        SET pa_mensaje = CONCAT(
+            'Error SQLSTATE orden servicio: ',
+            v_sqlstate, ' - ', v_error_message
+        );
+    END;
+
+    -- Iniciar transacción
+    START TRANSACTION;
+
+    INSERT INTO taordenservicio (
+        idOrden,
+        clienteId,
+        fechaIngreso,
+        estado,
+        totalPrendas,
+        observaciones,
+        createdAt,
+        tenantId,
+        fechaEntrega
+    )
+    VALUES (
+        pa_idorden,
+        pa_clienteid,
+        pa_fechaingreso,
+        pa_estado,
+        pa_totalprendas,
+        pa_observaciones,
+        NOW(),
+        pa_tenantid,
+        NULL
+    );
+
+    -- Validación: asegurar que se insertó
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se pudo insertar la orden de servicio';
+    END IF;
+
+    -- Confirmar cambios
+    COMMIT;
+
+    SET pa_codigobd = 0;
+    SET pa_mensaje = 'Orden de servicio insertada correctamente desde MySQL';
+
+END$$
+DELIMITER ;

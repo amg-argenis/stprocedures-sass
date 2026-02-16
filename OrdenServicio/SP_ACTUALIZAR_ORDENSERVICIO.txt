@@ -1,0 +1,69 @@
+DELIMITER $$
+
+CREATE OR REPLACE PROCEDURE SP_ACTUALIZAR_ORDENSERVICIO(
+    -- IN
+    IN  pa_idorden VARCHAR(255),
+    IN  pa_clienteid VARCHAR(255),
+    IN  pa_folio VARCHAR(255),
+    
+    IN  pa_fechaingreso VARCHAR(100),
+    IN  pa_estado VARCHAR(100),
+    IN  pa_totalprendas INT,
+    IN  pa_observaciones VARCHAR(255),
+    IN  pa_fechaentrega VARCHAR(100),
+  
+    -- OUT
+    OUT pa_codigobd INT,
+    OUT pa_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_error_message TEXT;
+
+    -- Handler de error: rollback + mensaje
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error_message = MESSAGE_TEXT;
+
+        SET pa_codigobd = 1;
+        SET pa_mensaje = CONCAT(
+            'Error SQLSTATE orden servicio: ',
+            v_sqlstate, ' - ', v_error_message
+        );
+    END;
+
+    -- Inicio de transacción
+    START TRANSACTION;
+
+    UPDATE taordenservicio
+    SET 
+        fechaIngreso    = pa_fechaingreso,
+        estado          = pa_estado,
+        totalPrendas    = pa_totalprendas,
+        observaciones   = pa_observaciones,
+        fechaEntrega    = pa_fechaentrega
+    WHERE
+    TRIM(idOrden) = TRIM(pa_idorden)
+    AND TRIM(clienteId) = TRIM(pa_clienteid)
+    AND TRIM(folio) = TRIM(pa_folio)
+	AND estado <> 'ELIMINADO';
+
+
+    -- Validar que sí se haya actualizado algo
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se encontro la orden de servicio para actualizar';
+    END IF;
+
+    -- Confirmar cambios
+    COMMIT;
+
+    SET pa_codigobd = 0;
+    SET pa_mensaje = 'Orden de servicio actualizada correctamente desde MySQL';
+
+END$$
+DELIMITER ;
