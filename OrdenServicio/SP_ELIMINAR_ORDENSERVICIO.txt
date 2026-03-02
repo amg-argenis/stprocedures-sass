@@ -1,56 +1,43 @@
 DELIMITER $$
 
 CREATE OR REPLACE PROCEDURE SP_ELIMINAR_ORDENSERVICIO(
-    -- IN
     IN  pa_idorden VARCHAR(255),
-    IN  pa_folio VARCHAR(255),
-      
-    -- OUT
+    IN  pa_folio   VARCHAR(255),
     OUT pa_codigobd INT,
-    OUT pa_mensaje VARCHAR(255)
+    OUT pa_mensaje  VARCHAR(255)
 )
 BEGIN
-    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_sqlstate    CHAR(5);
     DECLARE v_error_message TEXT;
 
-    -- Handler de error: rollback + mensaje
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-
         GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
+            v_sqlstate      = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
-
         SET pa_codigobd = 1;
-        SET pa_mensaje = CONCAT(
-            'Error SQLSTATE orden servicio: ',
-            v_sqlstate, ' - ', v_error_message
-        );
+        SET pa_mensaje  = CONCAT('Error SQLSTATE orden servicio: ',
+                                  v_sqlstate, ' - ', v_error_message);
     END;
 
-    -- Inicio de transacción
     START TRANSACTION;
 
     UPDATE taordenservicio
-    SET 
-        estado = 'ELIMINADO'
+    SET estado = 'ELIMINADO'
     WHERE TRIM(idOrden) = TRIM(pa_idorden)
-    AND TRIM(folio) = TRIM(pa_folio);
+      AND TRIM(folio)   = TRIM(pa_folio);
 
-
-    -- Validar que sí se haya actualizado algo
+    -- Verificar resultado SIN lanzar excepción
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se encontro la orden de servicio para eliminar';
+        ROLLBACK;
+        SET pa_codigobd = 2;
+        SET pa_mensaje  = 'No se encontro la orden de servicio para eliminar, desde MySQL';
+    ELSE
+        COMMIT;
+        SET pa_codigobd = 0;
+        SET pa_mensaje  = 'Orden de servicio eliminada correctamente, desde MySQL';
     END IF;
-
-    -- Confirmar cambios
-    COMMIT;
-
-    SET pa_codigobd = 0;
-    SET pa_mensaje = 'Orden de servicio eliminada correctamente desde MySQL';
 
 END$$
 DELIMITER ;
-
