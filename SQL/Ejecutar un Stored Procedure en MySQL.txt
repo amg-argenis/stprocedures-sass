@@ -1,0 +1,15 @@
+-- Ejecutar un Stored Procedure en MySQL
+-- 1. Declarar variables de sesión para los parámetros OUT
+SET @codigo  = 0;
+SET @mensaje = '';
+
+-- 2. Llamar al stored procedure
+CALL SP_BUSCAR_ORDENSERVICIOCONDETALLE(
+    '09ea85ac-546a-4889-8417-6ca9d71ddcf6',
+    'ORD-000000004',
+    @codigo,     -- pa_codigobd  (OUT)
+    @mensaje     -- pa_mensajebd (OUT)
+);
+
+-- 3. Ver los parámetros de salida
+SELECT @codigo AS codigobd, @mensaje AS mensajebd;

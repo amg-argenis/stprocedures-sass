@@ -1,0 +1,18 @@
+CREATE TABLE taordenservicio (
+    idOrden       CHAR(36)      NOT NULL,
+    clienteId     CHAR(36),
+    folio         VARCHAR(50)   NOT NULL,
+    fechaIngreso  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado        VARCHAR(100),
+    totalPrendas  INTEGER,
+    observaciones VARCHAR(255),
+    createdAt     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tenantId      CHAR(36),
+    fechaEntrega  TIMESTAMP,
+
+    CONSTRAINT pk_taordenservicio PRIMARY KEY (idOrden),
+    CONSTRAINT uq_taordenservicio_folio UNIQUE (folio)
+);
+
+
+SELECT * FROM taordenservicio;

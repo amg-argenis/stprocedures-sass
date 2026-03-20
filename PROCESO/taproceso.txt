@@ -1,0 +1,13 @@
+CREATE TABLE taproceso (
+    idProceso      CHAR(36)       NOT NULL,
+    nombre         VARCHAR(100)   NOT NULL,
+    descripcion    VARCHAR(255),
+    precioUnitario DECIMAL(10,2),
+    activo         SMALLINT       NOT NULL DEFAULT 1,
+    tenantId       CHAR(36),
+
+    CONSTRAINT pk_taproceso PRIMARY KEY (idProceso)
+);
+
+CREATE INDEX idx_taproceso_idProceso ON taproceso(idProceso);
+CREATE INDEX idx_taproceso_tenantId ON taproceso(tenantId);
