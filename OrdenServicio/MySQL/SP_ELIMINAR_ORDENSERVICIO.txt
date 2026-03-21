@@ -16,8 +16,8 @@ BEGIN
         GET DIAGNOSTICS CONDITION 1
             v_sqlstate      = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
-        SET pa_codigobd = 1;
-        SET pa_mensaje  = CONCAT('Error SQLSTATE orden servicio: ',
+        SET pa_codigobd = -1;
+        SET pa_mensaje  = CONCAT('Error desde MySQL: ',
                                   v_sqlstate, ' - ', v_error_message);
     END;
 
@@ -28,7 +28,7 @@ BEGIN
     WHERE TRIM(idOrden) = TRIM(pa_idorden)
       AND TRIM(folio)   = TRIM(pa_folio);
 
-    -- Verificar resultado SIN lanzar excepción
+    -- Verificar resultado SIN lanzar excepcion
     IF ROW_COUNT() = 0 THEN
         ROLLBACK;
         SET pa_codigobd = 2;

@@ -29,14 +29,14 @@ BEGIN
             v_sqlstate = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
 
-        SET pa_codigobd = 1;
+        SET pa_codigobd = -1;
         SET pa_mensaje = CONCAT(
-            'Error SQLSTATE orden servicio: ',
+            'Error desde MySQL: ',
             v_sqlstate, ' - ', v_error_message
         );
     END;
 
-    -- Inicio de transacción
+    -- Inicio de transaccion
     START TRANSACTION;
 
     UPDATE taordenservicio
@@ -53,7 +53,7 @@ BEGIN
 	AND estado <> 'ELIMINADO';
     
     
-        -- Verificar resultado SIN lanzar excepción
+        -- Verificar resultado SIN lanzar excepciï¿½n
     IF ROW_COUNT() = 0 THEN
         ROLLBACK;
         SET pa_codigobd = 2;

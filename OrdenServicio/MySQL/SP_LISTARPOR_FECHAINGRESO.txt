@@ -15,15 +15,15 @@ BEGIN
             v_sqlstate = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
 
-        SET pa_codigobd = 1;
-        SET pa_mensaje = CONCAT('Error SQLSTATE orden servicio: ', v_sqlstate, ': ', v_error_message);
+        SET pa_codigobd = -1;
+        SET pa_mensaje = CONCAT('Error desde MySQL: ', v_sqlstate, ': ', v_error_message);
     END;
 
     -- Valores por defecto (sin error)
     SET pa_codigobd = 0;
     SET pa_mensaje = 'Consulta correcta en orden servicio BD';
 
-    -- SELECT directo, sin transacción
+    -- SELECT directo, sin transaccion
     SELECT 
         idOrden,
         clienteId,

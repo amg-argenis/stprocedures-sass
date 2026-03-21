@@ -17,22 +17,22 @@ BEGIN
             v_sqlstate = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
 
-        SET pa_codigobd = 2;
+        SET pa_codigobd = -1;
         SET pa_mensaje = CONCAT(
-            'Error SQLSTATE orden servicio: ',
+            'Error desde MySQL: ',
             v_sqlstate, ': ', v_error_message
         );
     END;
 
     -- Validar existencia
-    SELECT COUNT(*)
+    SELECT COUNT(idOrden)
     INTO v_count
     FROM taordenservicio
     WHERE folio = pa_ordenfolio
       AND idOrden = pa_idorden;
 
     IF v_count = 0 THEN
-        SET pa_codigobd = 1;
+        SET pa_codigobd = 2;
         SET pa_mensaje = 'Orden de servicio no encontrada desde MySQL';
     ELSE
         SET pa_codigobd = 0;
