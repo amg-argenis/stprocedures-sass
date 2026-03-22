@@ -53,7 +53,7 @@ BEGIN
 	AND estado <> 'ELIMINADO';
     
     
-        -- Verificar resultado SIN lanzar excepci�n
+        -- Verificar resultado SIN lanzar excepci n
     IF ROW_COUNT() = 0 THEN
         ROLLBACK;
         SET pa_codigobd = 2;
@@ -61,7 +61,7 @@ BEGIN
     ELSE
         COMMIT;
         SET pa_codigobd = 0;
-        SET pa_mensaje  = 'Orden de servicio eliminada correctamente, desde MySQL';
+        SET pa_mensaje  = 'Orden de servicio actualizada correctamente, desde MySQL';
     END IF;
 
 
