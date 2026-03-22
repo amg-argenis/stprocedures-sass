@@ -1,7 +1,5 @@
 DELIMITER $$
-
 CREATE OR REPLACE PROCEDURE SP_INSERTAR_ORDENSERVICIO(
-    -- IN
     IN  pa_idorden       VARCHAR(255),
     IN  pa_clienteid     VARCHAR(255),
     IN  pa_fechaingreso  VARCHAR(255),
@@ -10,12 +8,8 @@ CREATE OR REPLACE PROCEDURE SP_INSERTAR_ORDENSERVICIO(
     IN  pa_observaciones VARCHAR(255),
     IN  pa_fechaentrega  VARCHAR(255),
     IN  pa_tenantid      VARCHAR(255),
-
-    -- OUT control
     OUT pa_codigobd      INT,
     OUT pa_mensaje       VARCHAR(255),
-
-    -- OUT campos insertados
     OUT po_idorden       VARCHAR(255),
     OUT po_clienteid     VARCHAR(255),
     OUT po_folio         VARCHAR(100),
@@ -31,18 +25,14 @@ BEGIN
     DECLARE v_sqlstate      CHAR(5);
     DECLARE v_error_message TEXT;
 
-    -- Handler de error → rollback
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-
         GET DIAGNOSTICS CONDITION 1
             v_sqlstate      = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
-
         SET pa_codigobd      = -1;
         SET pa_mensaje       = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
-
         SET po_idorden       = NULL;
         SET po_clienteid     = NULL;
         SET po_folio         = NULL;
@@ -55,9 +45,9 @@ BEGIN
         SET po_fechaentrega  = NULL;
     END;
 
-    -- Iniciar transaccion
     START TRANSACTION;
 
+    -- El folio lo genera el trigger automaticamente
     INSERT INTO taordenservicio (
         idOrden,
         clienteId,
@@ -76,18 +66,17 @@ BEGIN
         pa_estado,
         pa_totalprendas,
         pa_observaciones,
-        NOW(),         
+        NOW(),
         pa_tenantid,
         pa_fechaentrega
     );
 
-    -- Validacion: asegurar que se inserto
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'No se pudo insertar la orden de servicio, desde MySQL';
     END IF;
 
-    -- Recuperar todos los campos insertados usando el UUID recibido desde Java
+    -- Recuperar campos incluyendo el folio generado por el trigger
     SELECT
         idOrden,
         clienteId,
@@ -102,7 +91,7 @@ BEGIN
     INTO
         po_idorden,
         po_clienteid,
-        po_folio,          
+        po_folio,
         po_fechaingreso,
         po_estado,
         po_totalprendas,
@@ -113,12 +102,9 @@ BEGIN
     FROM taordenservicio
     WHERE idOrden = pa_idorden;
 
-    -- Confirmar cambios
     COMMIT;
-
     SET pa_codigobd = 0;
     SET pa_mensaje  = 'Orden de servicio insertada correctamente, desde MySQL';
 
 END$$
 DELIMITER ;
-
