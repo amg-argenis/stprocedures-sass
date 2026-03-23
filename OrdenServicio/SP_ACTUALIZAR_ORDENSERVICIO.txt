@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE SP_ACTUALIZAR_ORDENSERVICIO(
-    IN  pa_tenantid     VARCHAR(255),  -- 👈 agregado
+    IN  pa_tenantid     VARCHAR(255),
     IN  pa_idorden      VARCHAR(255),
     IN  pa_clienteid    VARCHAR(255),
     IN  pa_folio        VARCHAR(255),
@@ -38,7 +38,7 @@ BEGIN
     WHERE TRIM(idOrden)   = TRIM(pa_idorden)
       AND TRIM(clienteId) = TRIM(pa_clienteid)
       AND TRIM(folio)     = TRIM(pa_folio)
-      AND TRIM(tenantId)  = TRIM(pa_tenantid)  -- 👈 agregado
+      AND TRIM(tenantId)  = TRIM(pa_tenantid)
       AND estado         <> 'ELIMINADO';
 
     IF ROW_COUNT() = 0 THEN
