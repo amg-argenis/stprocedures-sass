@@ -1,32 +1,37 @@
 DELIMITER $$
-
-CREATE PROCEDURE SP_BUSCAR_ORDENSERVICIOCONDETALLE (
-    IN  pa_idorden   CHAR(36),
-    IN  pa_folio     VARCHAR(50),
-
-    OUT pa_codigobd  INT,
-    OUT pa_mensajebd VARCHAR(255)
+CREATE OR REPLACE PROCEDURE SP_BUSCAR_ORDENSERVICIOCONDETALLE(
+    IN  pa_tenantid   CHAR(36),
+    IN  pa_idorden    CHAR(36),
+    IN  pa_folio      VARCHAR(50),
+    OUT pa_codigobd   INT,
+    OUT pa_mensajebd  VARCHAR(255)
 )
 BEGIN
-    DECLARE vl_existe INT DEFAULT 0;
+    DECLARE vl_existe       INT DEFAULT 0;
+    DECLARE v_sqlstate      CHAR(5);
+    DECLARE v_error_message TEXT;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        SET pa_codigobd  = 1;
-        SET pa_mensajebd = 'Error interno al consultar la orden de servicio con detalle, desde MySQL';
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate      = RETURNED_SQLSTATE,
+            v_error_message = MESSAGE_TEXT;
+        SET pa_codigobd  = -1;
+        SET pa_mensajebd = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
     END;
 
     SELECT COUNT(idOrden)
     INTO   vl_existe
     FROM   taordenservicio
-    WHERE  idOrden = pa_idorden
-    AND    folio   = pa_folio;
+    WHERE  idOrden  = pa_idorden
+      AND  folio    = pa_folio
+      AND  tenantId = pa_tenantid
+      AND  estado  <> 'ELIMINADO';
 
     IF vl_existe = 0 THEN
         SET pa_codigobd  = 2;
         SET pa_mensajebd = 'Orden de servicio con detalle no encontrada, desde MySQL';
     ELSE
-        -- Un solo result set: N filas (una por cada detalle)
         SELECT
             o.idOrden,
             o.clienteId,
@@ -46,16 +51,17 @@ BEGIN
             d.colorReferencia,
             d.tenantId AS tenantIdDetalle
         FROM  taordenservicio o
-        INNER JOIN tadetalleorden d
+        INNER JOIN tadetalleordenservicio d
             ON  d.ordenId  = o.idOrden
             AND d.tenantId = o.tenantId
-        WHERE o.idOrden = pa_idorden
-        AND   o.folio   = pa_folio;
+        WHERE o.idOrden  = pa_idorden
+          AND o.folio    = pa_folio
+          AND o.tenantId = pa_tenantid
+          AND o.estado  <> 'ELIMINADO';
 
         SET pa_codigobd  = 0;
         SET pa_mensajebd = 'Consulta exitosa de orden servicio con detalle, desde MySQL';
     END IF;
 
 END$$
-
 DELIMITER ;
