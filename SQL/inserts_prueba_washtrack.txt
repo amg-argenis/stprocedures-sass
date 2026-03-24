@@ -1,0 +1,65 @@
+-- 1. TENANT
+INSERT INTO tatenant (idTenant, nombre, activo) VALUES
+('a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Lavanderia El Blanco SA de CV', TRUE);
+
+-- 2. FOLIO SEQUENCE
+INSERT INTO folio_sequence (tenantId, nombre, valor) VALUES
+('a051a168-fa2a-11f0-aab7-e66133dbb0de', 'ORDEN_SERVICIO', 0);
+
+-- 3. CLIENTES
+INSERT INTO tacliente (idCliente, tenantId, nombre, contacto, telefono, email, creditoHabilitado, limiteCredito, activo) VALUES
+('c1000001-0000-0000-0000-000000000001', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Uniformes Garza SA de CV',    'Roberto Garza',   '8112345678', 'rgarza@uniformesgarza.com',   TRUE,  15000.00, TRUE),
+('c1000001-0000-0000-0000-000000000002', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Hotel Presidente Monterrey', 'Laura Mendez',    '8198765432', 'lmendez@hotelpresidente.com', TRUE,  30000.00, TRUE),
+('c1000001-0000-0000-0000-000000000003', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Clinica Santa Maria',        'Dr. Pedro Salas', '8134567890', 'psalas@clinicasantamaria.com', TRUE,  20000.00, TRUE),
+('c1000001-0000-0000-0000-000000000004', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Restaurante La Hacienda',    'Ana Torres',      '8156781234', 'atorres@lahacienda.com',      FALSE,     0.00, TRUE),
+('c1000001-0000-0000-0000-000000000005', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Grupo Industrial Noreste',   'Carlos Vega',     '8167894321', 'cvega@gruponoreste.com',      TRUE,  50000.00, TRUE);
+
+-- 4. PROCESOS
+INSERT INTO taprocesos (idProceso, tenantId, nombre, descripcion, precioUnitario, activo) VALUES
+('p0000001-0000-0000-0000-000000000001', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Lavado en seco',    'Lavado sin agua con solventes',          25.00, TRUE),
+('p0000001-0000-0000-0000-000000000002', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Lavado industrial', 'Lavado con maquinaria de alta capacidad', 12.00, TRUE),
+('p0000001-0000-0000-0000-000000000003', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Planchado',         'Planchado a vapor profesional',           8.00, TRUE),
+('p0000001-0000-0000-0000-000000000004', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Desmanchado',       'Tratamiento de manchas especiales',      15.00, TRUE),
+('p0000001-0000-0000-0000-000000000005', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'Barrido natural',   'Proceso de barrido con tono natural',    18.00, TRUE);
+
+-- 5. ORDENES DE SERVICIO
+INSERT INTO taordenservicio (idOrden, tenantId, clienteId, folio, fechaIngreso, fechaEntrega, estado, totalPrendas, observaciones) VALUES
+('or000001-0000-0000-0000-000000000001', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000001', 'ORD-0000000001', '2026-03-01', '2026-03-05', 'ENTREGADO',  200, 'Uniformes de trabajo area produccion'),
+('or000001-0000-0000-0000-000000000002', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000002', 'ORD-0000000002', '2026-03-02', '2026-03-06', 'ENTREGADO',  350, 'Sabanas y toallas habitaciones piso 3 y 4'),
+('or000001-0000-0000-0000-000000000003', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000003', 'ORD-0000000003', '2026-03-03', '2026-03-07', 'LISTO',      180, 'Batas medicas y ropa quirurgica'),
+('or000001-0000-0000-0000-000000000004', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000004', 'ORD-0000000004', '2026-03-04', '2026-03-08', 'EN_PROCESO', 120, 'Manteles y servilletas evento fin de semana'),
+('or000001-0000-0000-0000-000000000005', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000005', 'ORD-0000000005', '2026-03-05', '2026-03-10', 'EN_PROCESO', 500, 'Overoles y guantes area soldadura'),
+('or000001-0000-0000-0000-000000000006', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000001', 'ORD-0000000006', '2026-03-08', '2026-03-12', 'RECIBIDO',   150, 'Uniformes administrativos quincena'),
+('or000001-0000-0000-0000-000000000007', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000002', 'ORD-0000000007', '2026-03-10', '2026-03-14', 'RECIBIDO',   400, 'Sabanas king size temporada alta'),
+('or000001-0000-0000-0000-000000000008', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000003', 'ORD-0000000008', '2026-03-12', NULL,         'RECIBIDO',   90,  'Uniformes enfermeria turno nocturno'),
+('or000001-0000-0000-0000-000000000009', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000004', 'ORD-0000000009', '2026-03-15', NULL,         'RECIBIDO',   75,  'Delantales y gorros cocina'),
+('or000001-0000-0000-0000-000000000010', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'c1000001-0000-0000-0000-000000000005', 'ORD-0000000010', '2026-03-18', NULL,         'RECIBIDO',   600, 'Ropa industrial lote marzo');
+
+-- 6. DETALLE ORDENES
+INSERT INTO tadetalleordenservicio (idDetalleOrden, tenantId, ordenId, procesoId, tipoPrenda, cantidad, colorReferencia) VALUES
+('d0000001-0000-0000-0000-000000000001', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000001', 'p0000001-0000-0000-0000-000000000002', 'Camisa de trabajo',       120, 'Azul rey'),
+('d0000001-0000-0000-0000-000000000002', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000001', 'p0000001-0000-0000-0000-000000000003', 'Pantalon de trabajo',      80, 'Azul marino'),
+('d0000001-0000-0000-0000-000000000003', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000002', 'p0000001-0000-0000-0000-000000000002', 'Sabana king size',        200, 'Blanco'),
+('d0000001-0000-0000-0000-000000000004', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000002', 'p0000001-0000-0000-0000-000000000003', 'Toalla de bano',          150, 'Blanco'),
+('d0000001-0000-0000-0000-000000000005', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000003', 'p0000001-0000-0000-0000-000000000001', 'Bata medica',             100, 'Blanco'),
+('d0000001-0000-0000-0000-000000000006', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000003', 'p0000001-0000-0000-0000-000000000004', 'Ropa quirurgica',          80, 'Verde quirurgico'),
+('d0000001-0000-0000-0000-000000000007', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000004', 'p0000001-0000-0000-0000-000000000002', 'Mantel rectangular',       70, 'Blanco marfil'),
+('d0000001-0000-0000-0000-000000000008', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000004', 'p0000001-0000-0000-0000-000000000003', 'Servilleta de tela',       50, 'Blanco marfil'),
+('d0000001-0000-0000-0000-000000000009', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000005', 'p0000001-0000-0000-0000-000000000002', 'Overol industrial',       300, 'Gris Oxford'),
+('d0000001-0000-0000-0000-000000000010', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000005', 'p0000001-0000-0000-0000-000000000004', 'Guante industrial',       200, 'Negro'),
+('d0000001-0000-0000-0000-000000000011', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000006', 'p0000001-0000-0000-0000-000000000001', 'Camisa administrativa',    90, 'Blanco'),
+('d0000001-0000-0000-0000-000000000012', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000006', 'p0000001-0000-0000-0000-000000000003', 'Pantalon administrativo',  60, 'Negro'),
+('d0000001-0000-0000-0000-000000000013', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000007', 'p0000001-0000-0000-0000-000000000002', 'Sabana king size',        250, 'Blanco'),
+('d0000001-0000-0000-0000-000000000014', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000007', 'p0000001-0000-0000-0000-000000000003', 'Funda de almohada',       150, 'Blanco'),
+('d0000001-0000-0000-0000-000000000015', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000008', 'p0000001-0000-0000-0000-000000000001', 'Uniforme enfermeria',      50, 'Blanco'),
+('d0000001-0000-0000-0000-000000000016', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000008', 'p0000001-0000-0000-0000-000000000003', 'Cofia enfermeria',         40, 'Blanco'),
+('d0000001-0000-0000-0000-000000000017', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000009', 'p0000001-0000-0000-0000-000000000002', 'Delantal de cocina',       45, 'Negro'),
+('d0000001-0000-0000-0000-000000000018', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000009', 'p0000001-0000-0000-0000-000000000003', 'Gorro de cocina',          30, 'Blanco'),
+('d0000001-0000-0000-0000-000000000019', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000010', 'p0000001-0000-0000-0000-000000000002', 'Overol industrial',       350, 'Azul marino'),
+('d0000001-0000-0000-0000-000000000020', 'a051a168-fa2a-11f0-aab7-e66133dbb0de', 'or000001-0000-0000-0000-000000000010', 'p0000001-0000-0000-0000-000000000005', 'Pantalon industrial',     250, 'Azul marino');
+
+-- 7. ACTUALIZAR FOLIO SEQUENCE
+UPDATE folio_sequence
+SET valor = 10
+WHERE nombre   = 'ORDEN_SERVICIO'
+  AND tenantId = 'a051a168-fa2a-11f0-aab7-e66133dbb0de';
