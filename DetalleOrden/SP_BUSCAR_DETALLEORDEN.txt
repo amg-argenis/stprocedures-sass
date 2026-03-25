@@ -1,4 +1,5 @@
 DELIMITER $$
+drop procedure if exists SP_BUSCAR_DETALLEORDEN;
 CREATE PROCEDURE SP_BUSCAR_DETALLEORDEN(
     IN  pa_tenantid       VARCHAR(255),
     IN  pa_iddetalleorden VARCHAR(255),
@@ -25,10 +26,11 @@ BEGIN
     FROM tadetalleordenservicio
     WHERE idDetalleOrden = pa_iddetalleorden
       AND ordenId        = pa_ordenid
-      AND tenantId       = pa_tenantid;
+      AND tenantId       = pa_tenantid
+      AND estado <> 'ELIMINADO';
 
     IF v_count = 0 THEN
-        SET pa_codigobd = 1;
+        SET pa_codigobd = 2;
         SET pa_mensaje  = 'Orden detalle de servicio no encontrada desde MySQL';
     ELSE
         SET pa_codigobd = 0;
