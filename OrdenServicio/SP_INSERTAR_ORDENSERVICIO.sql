@@ -76,6 +76,10 @@ BEGIN
             SET MESSAGE_TEXT = 'No se pudo insertar la orden de servicio, desde MySQL';
     END IF;
 
+    COMMIT;
+    SET pa_codigobd = 0;
+    SET pa_mensaje  = 'Orden de servicio insertada correctamente, desde MySQL';
+
     -- Recuperar campos incluyendo el folio generado por el trigger
     SELECT
         idOrden,
@@ -102,9 +106,6 @@ BEGIN
     FROM taordenservicio
     WHERE idOrden = pa_idorden;
 
-    COMMIT;
-    SET pa_codigobd = 0;
-    SET pa_mensaje  = 'Orden de servicio insertada correctamente, desde MySQL';
 
 END$$
 DELIMITER ;
