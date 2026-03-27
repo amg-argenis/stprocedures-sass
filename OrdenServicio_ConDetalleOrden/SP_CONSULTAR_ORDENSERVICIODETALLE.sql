@@ -1,5 +1,4 @@
--- DROP PROCEDURE SP_BUSCAR_ORDENSERVICIOCONDETALLE;
-
+DROP PROCEDURE IF EXISTS SP_BUSCAR_ORDENSERVICIOCONDETALLE$$
 DELIMITER $$
 
 CREATE PROCEDURE SP_BUSCAR_ORDENSERVICIOCONDETALLE(
@@ -7,7 +6,7 @@ CREATE PROCEDURE SP_BUSCAR_ORDENSERVICIOCONDETALLE(
     IN  pa_idorden    CHAR(36),
     IN  pa_folio      VARCHAR(50),
     OUT pa_codigobd   INT,
-    OUT pa_mensaje  VARCHAR(255)
+    OUT pa_mensaje    VARCHAR(255)
 )
 BEGIN
     DECLARE vl_existe       INT DEFAULT 0;
@@ -20,7 +19,7 @@ BEGIN
             v_sqlstate      = RETURNED_SQLSTATE,
             v_error_message = MESSAGE_TEXT;
         SET pa_codigobd  = -1;
-        SET pa_mensaje = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
+        SET pa_mensaje   = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
     END;
 
     SELECT COUNT(idOrden)
@@ -33,11 +32,10 @@ BEGIN
 
     IF vl_existe = 0 THEN
         SET pa_codigobd  = 2;
-        SET pa_mensaje = 'Orden de servicio con detalle no encontrada, desde MySQL';
+        SET pa_mensaje   = 'Orden de servicio con detalle no encontrada, desde MySQL';
     ELSE
-	
-		SET pa_codigobd  = 0;
-        SET pa_mensaje = 'Consulta exitosa de orden servicio con detalle, desde MySQL';
+        SET pa_codigobd  = 0;
+        SET pa_mensaje   = 'Consulta exitosa de orden servicio con detalle, desde MySQL';
 
         SELECT
             o.idOrden,
@@ -64,7 +62,8 @@ BEGIN
         WHERE o.idOrden  = pa_idorden
           AND o.folio    = pa_folio
           AND o.tenantId = pa_tenantid
-          AND o.estado  <> 'ELIMINADO';
+          AND o.estado  <> 'ELIMINADO'
+          AND d.estado  <> 'ELIMINADO';  -- 👈 agregado
 
     END IF;
 
