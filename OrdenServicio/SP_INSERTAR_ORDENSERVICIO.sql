@@ -73,7 +73,7 @@ BEGIN
 
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se pudo insertar la orden de servicio, desde MySQL';
+        SET MESSAGE_TEXT = 'No se pudo insertar la orden de servicio, desde MySQL';
     END IF;
 
     COMMIT;
