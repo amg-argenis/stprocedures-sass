@@ -3,8 +3,8 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS SP_BUSCAR_ENTREGA$$
 
 CREATE PROCEDURE SP_BUSCAR_ENTREGA(
+    IN  pa_identrega   CHAR(36),
     IN  pa_tenantid  CHAR(36),
-    IN  pa_ordenid   CHAR(36),
     OUT pa_codigobd  INT,
     OUT pa_mensaje   VARCHAR(255)
 )
@@ -25,7 +25,7 @@ BEGIN
     SELECT COUNT(idEntrega)
     INTO v_count
     FROM taentregas
-    WHERE ordenId  = pa_ordenid
+    WHERE idEntrega  = pa_identrega
       AND tenantId = pa_tenantid;
 
     IF v_count = 0 THEN
@@ -46,7 +46,7 @@ BEGIN
             estado,
             fechaCreacion
         FROM taentregas
-        WHERE ordenId  = pa_ordenid
+        WHERE idEntrega  = pa_identrega
           AND tenantId = pa_tenantid;
 
     END IF;
