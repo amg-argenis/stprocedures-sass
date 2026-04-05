@@ -61,7 +61,7 @@ BEGIN
             pa_totalentregado,
             pa_conformidad,
             pa_observaciones,
-            'ACTIVO',
+            'ENTREGADO',
             NOW()
         );
 
