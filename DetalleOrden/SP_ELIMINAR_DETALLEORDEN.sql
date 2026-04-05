@@ -5,6 +5,7 @@ CREATE PROCEDURE SP_ELIMINAR_DETALLEORDEN(
     IN  pa_tenantid       VARCHAR(255),
     IN  pa_idordendetalle VARCHAR(255),
     IN  pa_ordenid        VARCHAR(255),
+    
     OUT pa_codigobd       INT,
     OUT pa_mensaje        VARCHAR(255)
 )
