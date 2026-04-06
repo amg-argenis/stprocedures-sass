@@ -47,7 +47,8 @@ BEGIN
             fechaEntrega       = pa_fechaentrega,
             totalEntregado     = pa_totalentregado,
             conformidadCliente = pa_conformidad,
-            observaciones      = pa_observaciones
+            observaciones      = pa_observaciones,
+            estado             = pa_estado 
         WHERE idEntrega = pa_identrega
           AND ordenId   = pa_ordenid
           AND tenantId  = pa_tenantid;
