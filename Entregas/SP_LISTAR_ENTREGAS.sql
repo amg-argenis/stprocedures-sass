@@ -9,6 +9,7 @@ CREATE PROCEDURE SP_LISTAR_ENTREGAS(
 BEGIN
     DECLARE v_sqlstate      CHAR(5);
     DECLARE v_error_message TEXT;
+    DECLARE v_count         INT DEFAULT 0;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -19,22 +20,35 @@ BEGIN
         SET pa_mensaje  = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
     END;
 
-    SET pa_codigobd = 0;
-    SET pa_mensaje  = 'Consulta de entregas correcta, desde MySQL';
-
-    SELECT
-        idEntrega,
-        tenantId,
-        ordenId,
-        fechaEntrega,
-        totalEntregado,
-        conformidadCliente,
-        observaciones,
-        estado,
-        fechaCreacion
+    -- Verify if there are records
+    SELECT COUNT(idEntrega)
+    INTO v_count
     FROM taentregas
     WHERE tenantId = pa_tenantid
-    AND estado  <> 'ELIMINADO';
+      AND estado  <> 'ELIMINADO';
+
+    IF v_count = 0 THEN
+        SET pa_codigobd = 2;
+        SET pa_mensaje  = 'No se encontraron entregas registradas, desde MySQL';
+    ELSE
+        SET pa_codigobd = 0;
+        SET pa_mensaje  = 'Consulta de entregas correcta, desde MySQL';
+
+        SELECT
+            idEntrega,
+            tenantId,
+            ordenId,
+            fechaEntrega,
+            totalEntregado,
+            conformidadCliente,
+            observaciones,
+            estado,
+            fechaCreacion
+        FROM taentregas
+        WHERE tenantId = pa_tenantid
+          AND estado  <> 'ELIMINADO';
+
+    END IF;
 
 END$$
 DELIMITER ;
