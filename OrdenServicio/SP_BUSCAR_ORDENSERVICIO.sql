@@ -1,3 +1,4 @@
+DROP PROCEDURE IF EXISTS SP_BUSCAR_ORDENSERVICIO;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE SP_BUSCAR_ORDENSERVICIO(
     IN  pa_tenantid   VARCHAR(255),
@@ -30,10 +31,10 @@ BEGIN
 
     IF v_count = 0 THEN
         SET pa_codigobd = 2;
-        SET pa_mensaje  = 'Orden de servicio no encontrada desde MySQL';
+        SET pa_mensaje  = 'Orden de servicio no encontrada, desde MySQL';
     ELSE
         SET pa_codigobd = 0;
-        SET pa_mensaje  = 'Orden de servicio encontrada desde MySQL';
+        SET pa_mensaje  = 'Orden de servicio encontrada, desde MySQL';
 
         SELECT
             idOrden,
