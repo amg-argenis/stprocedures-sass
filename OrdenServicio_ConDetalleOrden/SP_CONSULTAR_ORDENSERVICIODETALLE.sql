@@ -41,6 +41,7 @@ BEGIN
         SELECT
             o.idOrden,
             o.clienteId,
+            tc.nombre AS nombreCliente,
             o.folio,
             o.fechaIngreso,
             o.estado,
@@ -61,6 +62,8 @@ BEGIN
             ON  d.ordenId  = o.idOrden
             AND d.tenantId = o.tenantId
             AND d.estado  <> 'ELIMINADO'
+        LEFT JOIN tacliente tc
+            ON o.clienteId = tc.idCliente
         WHERE o.idOrden  = pa_idorden
           AND o.folio    = pa_folio
           AND o.tenantId = pa_tenantid
