@@ -1,5 +1,5 @@
 DELIMITER $$
--- DROP PROCEDURE IF EXISTS SP_ELIMINAR_DETALLEORDEN$$
+DROP PROCEDURE IF EXISTS SP_ELIMINAR_DETALLEORDEN$$
 
 CREATE PROCEDURE SP_ELIMINAR_DETALLEORDEN(
     IN  pa_tenantid       VARCHAR(255),
@@ -25,12 +25,10 @@ BEGIN
 
     START TRANSACTION;
 
-    UPDATE tadetalleordenservicio
-    SET estado = 'ELIMINADO'
+    DELETE FROM tadetalleordenservicio    
     WHERE idDetalleOrden = pa_idordendetalle
-      AND ordenId        = pa_ordenid
-      AND tenantId       = pa_tenantid
-      AND estado        <> 'ELIMINADO';
+    AND ordenId        = pa_ordenid
+    AND tenantId       = pa_tenantid;
 
     IF ROW_COUNT() = 0 THEN
         ROLLBACK;
