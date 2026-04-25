@@ -45,7 +45,8 @@ BEGIN
             e.conformidadCliente,
             e.observaciones,
             e.estado,
-            e.fechaCreacion
+            e.fechaCreacion,
+            e.tipo
         FROM taentregas e
         INNER JOIN taordenservicio o
             ON  o.idOrden  = e.ordenId
