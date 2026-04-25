@@ -35,18 +35,26 @@ BEGIN
         SET pa_mensaje  = 'Consulta de entregas correcta, desde MySQL';
 
         SELECT
-            idEntrega,
-            tenantId,
-            ordenId,
-            fechaEntrega,
-            totalEntregado,
-            conformidadCliente,
-            observaciones,
-            estado,
-            fechaCreacion
-        FROM taentregas
-        WHERE tenantId = pa_tenantid
-          AND estado  <> 'ELIMINADO';
+            e.idEntrega,
+            e.tenantId,
+            e.ordenId,
+            o.folio,              -- from taordenservicio
+            c.nombre AS cliente,  -- from tacliente
+            e.fechaEntrega,
+            e.totalEntregado,
+            e.conformidadCliente,
+            e.observaciones,
+            e.estado,
+            e.fechaCreacion
+        FROM taentregas e
+        INNER JOIN taordenservicio o
+            ON  o.idOrden  = e.ordenId
+            AND o.tenantId = e.tenantId
+        INNER JOIN tacliente c
+            ON  c.idCliente = o.clienteId
+            AND c.tenantId  = e.tenantId
+        WHERE e.tenantId = pa_tenantid
+        AND e.estado  <> 'ELIMINADO';
 
     END IF;
 
