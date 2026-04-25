@@ -51,7 +51,7 @@ BEGIN
         VALUES (
             pa_identrega, pa_tenantid, pa_ordenid, pa_tipo,
             pa_fechaentrega, pa_totalentregado, pa_conformidad,
-            pa_observaciones, 'ACTIVO', NOW()
+            pa_observaciones, 'ENTREGADO', NOW()
         );
 
         IF ROW_COUNT() = 0 THEN
@@ -73,12 +73,27 @@ BEGIN
         SET pa_mensaje  = 'Entrega guardada exitosamente en BD, desde MySQL';
 
         SELECT
-            idEntrega, tenantId, ordenId, tipo,
-            fechaEntrega, totalEntregado, conformidadCliente,
-            observaciones, estado, fechaCreacion
-        FROM taentregas
-        WHERE idEntrega = pa_identrega
-          AND tenantId  = pa_tenantid;
+            e.idEntrega,
+            e.tenantId,
+            e.ordenId,
+            o.folio,              -- from taordenservicio
+            c.nombre AS cliente,  -- from tacliente
+            e.fechaEntrega,
+            e.totalEntregado,
+            e.conformidadCliente,
+            e.observaciones,
+            e.estado,
+            e.fechaCreacion,
+            e.tipo
+        FROM taentregas e
+        INNER JOIN taordenservicio o
+            ON  o.idOrden  = e.ordenId
+            AND o.tenantId = e.tenantId
+        INNER JOIN tacliente c
+            ON  c.idCliente = o.clienteId
+            AND c.tenantId  = e.tenantId
+        WHERE e.tenantId = pa_tenantid
+        AND e.estado  <> 'ELIMINADO';
 
     END IF;
 
