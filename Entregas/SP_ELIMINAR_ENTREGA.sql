@@ -35,25 +35,14 @@ BEGIN
     ELSE
         START TRANSACTION;
 
-        UPDATE taentregas
-        SET estado = 'ELIMINADO'
+        DELETE FROM taentregas
         WHERE idEntrega = pa_identrega
-        AND tenantId  = pa_tenantid
-        AND estado   <> 'ELIMINADO';
+        AND tenantId  = pa_tenantid;
 
         IF ROW_COUNT() = 0 THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = 'No se pudo eliminar la entrega, desde MySQL';
         END IF;
-
-        -- Revert order status back to LISTO
-        UPDATE taordenservicio
-        SET estado = 'LISTO'
-        WHERE idOrden = (
-            SELECT ordenId FROM taentregas 
-            WHERE idEntrega = pa_identrega
-        )
-        AND tenantId = pa_tenantid;
 
         COMMIT;
 

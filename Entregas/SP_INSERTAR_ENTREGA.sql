@@ -69,6 +69,22 @@ BEGIN
 
         COMMIT;
 
+        -- Check if total delivered equals order total
+        SELECT SUM(totalEntregado)
+        INTO v_totalentregado
+        FROM taentregas
+        WHERE ordenId  = pa_ordenid
+        AND tenantId = pa_tenantid
+        AND estado  <> 'ELIMINADO';
+
+        -- If total delivered >= order total, mark as ENTREGADO
+        IF v_totalentregado >= (SELECT totalPrendas FROM taordenservicio WHERE idOrden = pa_ordenid) THEN
+            UPDATE taordenservicio
+            SET estado = 'ENTREGADO'
+            WHERE idOrden  = pa_ordenid
+            AND tenantId = pa_tenantid;
+        END IF;
+
         SET pa_codigobd = 0;
         SET pa_mensaje  = 'Entrega guardada exitosamente en BD, desde MySQL';
 
