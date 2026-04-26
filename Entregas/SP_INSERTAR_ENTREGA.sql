@@ -14,30 +14,31 @@ CREATE PROCEDURE SP_INSERTAR_ENTREGA(
     OUT pa_mensaje          VARCHAR(255)
 )
 BEGIN
-    DECLARE v_sqlstate      CHAR(5);
-    DECLARE v_error_message TEXT;
-    DECLARE v_count         INT DEFAULT 0;
+    DECLARE vl_sqlstate                CHAR(5);
+    DECLARE vl_error_message           TEXT;
+    DECLARE vl_count                   INT DEFAULT 0;
+    DECLARE vl_totalentregado          INT DEFAULT 0;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         GET DIAGNOSTICS CONDITION 1
-            v_sqlstate      = RETURNED_SQLSTATE,
-            v_error_message = MESSAGE_TEXT;
+            vl_sqlstate      = RETURNED_SQLSTATE,
+            vl_error_message = MESSAGE_TEXT;
         SET pa_codigobd = -1;
-        SET pa_mensaje  = CONCAT('Error desde MySQL: ', v_sqlstate, ' - ', v_error_message);
+        SET pa_mensaje  = CONCAT('Error desde MySQL: ', vl_sqlstate, ' - ', vl_error_message);
     END;
 
     -- Verify the order exists and is not eliminated
     SELECT COUNT(idOrden)
-    INTO v_count
+    INTO vl_count
     FROM taordenservicio
     WHERE idOrden  = pa_ordenid
       AND tenantId = pa_tenantid
       AND estado  <> 'ELIMINADO'
       AND estado  <> 'ENTREGADO';
 
-    IF v_count = 0 THEN
+    IF vl_count = 0 THEN
         SET pa_codigobd = 2;
         SET pa_mensaje  = 'Orden no encontrada, eliminada o ya entregada completamente, desde MySQL';
     ELSE
@@ -71,14 +72,13 @@ BEGIN
 
         -- Check if total delivered equals order total
         SELECT SUM(totalEntregado)
-        INTO v_totalentregado
+        INTO vl_totalentregado
         FROM taentregas
         WHERE ordenId  = pa_ordenid
-        AND tenantId = pa_tenantid
-        AND estado  <> 'ELIMINADO';
+        AND tenantId = pa_tenantid;
 
         -- If total delivered >= order total, mark as ENTREGADO
-        IF v_totalentregado >= (SELECT totalPrendas FROM taordenservicio WHERE idOrden = pa_ordenid) THEN
+        IF vl_totalentregado >= (SELECT totalPrendas FROM taordenservicio WHERE idOrden = pa_ordenid) THEN
             UPDATE taordenservicio
             SET estado = 'ENTREGADO'
             WHERE idOrden  = pa_ordenid
@@ -108,8 +108,7 @@ BEGIN
         INNER JOIN tacliente c
             ON  c.idCliente = o.clienteId
             AND c.tenantId  = e.tenantId
-        WHERE e.tenantId = pa_tenantid
-        AND e.estado  <> 'ELIMINADO';
+        WHERE e.tenantId = pa_tenantid;
 
     END IF;
 
