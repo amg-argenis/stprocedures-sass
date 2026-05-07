@@ -59,7 +59,8 @@ BEGIN
         nombre,
         descripcion,
         precioUnitario,
-        activo
+        activo,
+        codigo
     FROM taprocesos
     WHERE idProceso = pa_idproceso
       AND tenantId  = pa_tenantid;

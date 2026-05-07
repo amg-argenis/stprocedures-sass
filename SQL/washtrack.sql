@@ -486,3 +486,42 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- TRIGGER PARA CODIGO DE PROCESOS DE LAVADO
+
+--
+-- Table structure for table `folio_sequence`
+--
+
+CREATE TABLE `folio_sequence` (
+  `tenantId` char(36) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `valor` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `folio_sequence`
+--
+
+INSERT INTO `folio_sequence` (`tenantId`, `nombre`, `valor`) VALUES
+('a051a168-fa2a-11f0-aab7-e66133dbb0de', 'PROCESOS_LAVADO', 0);
+
+DELIMITER $$
+CREATE TRIGGER `trg_codigo_proceso_lavado` BEFORE INSERT ON `taprocesos` FOR EACH ROW BEGIN
+    DECLARE next_folio BIGINT;
+
+    UPDATE folio_sequence
+    SET valor = valor + 1
+    WHERE nombre   = 'PROCESOS_LAVADO'
+      AND tenantId = NEW.tenantId;
+
+    SELECT valor
+    INTO next_folio
+    FROM folio_sequence
+    WHERE nombre   = 'PROCESOS_LAVADO'
+      AND tenantId = NEW.tenantId;
+
+    SET NEW.codigo = CONCAT('PROC-', LPAD(next_folio, 5, '0'));
+END
+$$
+DELIMITER ;
