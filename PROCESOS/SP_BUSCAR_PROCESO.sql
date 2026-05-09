@@ -27,7 +27,8 @@ BEGIN
     INTO v_count
     FROM taprocesos
     WHERE codigo = pa_codigoproceso
-      AND tenantId  = pa_tenantid;
+      AND tenantId  = pa_tenantid
+      AND activo = 1;
 
 
     IF v_count = 0 THEN
@@ -47,7 +48,8 @@ BEGIN
             codigo
         FROM taprocesos
         WHERE codigo = pa_codigoproceso
-        AND tenantId  = pa_tenantid;
+        AND tenantId  = pa_tenantid
+        AND activo = 1;
     END IF;
 
 END$$
