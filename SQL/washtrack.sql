@@ -525,3 +525,45 @@ CREATE TRIGGER `trg_codigo_proceso_lavado` BEFORE INSERT ON `taprocesos` FOR EAC
 END
 $$
 DELIMITER ;
+
+########################################################################
+-- CADA QUE UN NUEVO TENANT SE CREA, ENTONCES:
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_nuevo_tenant$$
+
+CREATE TRIGGER trg_nuevo_tenant
+AFTER INSERT ON tatenant
+FOR EACH ROW
+BEGIN
+    INSERT INTO folio_sequence (tenantId, nombre, valor)
+    VALUES (NEW.idTenant, 'ORDEN_SERVICIO', 0);
+    
+    INSERT INTO folio_sequence (tenantId, nombre, valor)
+    VALUES (NEW.idTenant, 'PROCESOS_LAVADO', 0);
+END$$
+DELIMITER ;
+
+########################################################################
+
+-- Arreglar los Indices unicos en taprocesos
+########################################################################
+-- Remove the global unique constraint
+ALTER TABLE taprocesos 
+DROP INDEX codigo;
+
+-- Add a composite unique constraint (codigo + tenantId)
+ALTER TABLE taprocesos 
+ADD CONSTRAINT uk_codigo_tenant 
+UNIQUE (codigo, tenantId);
+
+
+-- Remove global unique constraint on folio
+ALTER TABLE taordenservicio 
+DROP INDEX folio;
+
+-- Add composite unique constraint (folio + tenantId)
+ALTER TABLE taordenservicio 
+ADD CONSTRAINT uk_folio_tenant 
+UNIQUE (folio, tenantId);
+########################################################################
+
