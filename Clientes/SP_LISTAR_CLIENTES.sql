@@ -9,6 +9,7 @@ CREATE PROCEDURE SP_LISTAR_CLIENTES(
 BEGIN
     DECLARE v_sqlstate      CHAR(5);
     DECLARE v_error_message TEXT;
+    DECLARE v_count         INT DEFAULT 0;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -19,23 +20,34 @@ BEGIN
         SET pa_mensaje  = CONCAT('Error desde MySQL: ', v_sqlstate, ': ', v_error_message);
     END;
 
-    SET pa_codigobd = 0;
-    SET pa_mensaje  = 'Consulta correcta de clientes desde MySQL';
-
-    SELECT
-        idCliente,
-        tenantId,
-        nombre,
-        contacto,
-        telefono,
-        email,
-        creditoHabilitado,
-        limiteCredito,
-        activo,
-        createdAt
+    SELECT COUNT(idCliente)
+    INTO v_count
     FROM tacliente
     WHERE tenantId = pa_tenantid
       AND activo   = TRUE;
+
+      IF v_count = 0 THEN
+        SET pa_codigobd = 2;
+        SET pa_mensaje  = 'sin registro de clientes, desde MySQL';
+      ELSE
+        SET pa_codigobd = 0;
+        SET pa_mensaje  = 'Consulta correcta de clientes, desde MySQL';
+
+        SELECT
+            idCliente,
+            tenantId,
+            nombre,
+            contacto,
+            telefono,
+            email,
+            creditoHabilitado,
+            limiteCredito,
+            activo,
+            createdAt
+        FROM tacliente
+        WHERE tenantId = pa_tenantid
+        AND activo   = TRUE;
+      END IF;
 
 END$$
 DELIMITER ;
