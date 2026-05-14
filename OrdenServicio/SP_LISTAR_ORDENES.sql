@@ -7,6 +7,7 @@ CREATE OR REPLACE PROCEDURE SP_LISTAR_ORDENES(
 BEGIN
     DECLARE v_sqlstate      CHAR(5);
     DECLARE v_error_message TEXT;
+    DECLARE v_count         INT DEFAULT 0;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -17,23 +18,35 @@ BEGIN
         SET pa_mensaje  = CONCAT('Error desde MySQL: ', v_sqlstate, ': ', v_error_message);
     END;
 
-    SET pa_codigobd = 0;
-    SET pa_mensaje  = 'Consulta correcta en orden servicio BD';
-
-    SELECT
-        idOrden,
-        clienteId,
-        folio,
-        fechaIngreso,
-        estado,
-        totalPrendas,
-        observaciones,
-        createdAt,
-        tenantId,
-        fechaEntrega
+    SELECT COUNT(idOrden)
+    INTO v_count
     FROM taordenservicio
     WHERE estado    <> 'ELIMINADO'
       AND tenantId   = pa_tenantid;
+
+      IF v_count = 0 THEN
+        SET pa_codigobd = 2;
+        SET pa_mensaje  = 'Sin registro de ordenes servicio, desde MySQL';
+      ELSE
+      SET pa_codigobd = 0;
+        SET pa_mensaje  = 'Consulta correcta en orden servicio, desde MySQL';
+
+        SELECT
+            idOrden,
+            clienteId,
+            folio,
+            fechaIngreso,
+            estado,
+            totalPrendas,
+            observaciones,
+            createdAt,
+            tenantId,
+            fechaEntrega
+        FROM taordenservicio
+        WHERE estado    <> 'ELIMINADO'
+        AND tenantId   = pa_tenantid;
+        
+      END IF;
 
 END$$
 DELIMITER ;

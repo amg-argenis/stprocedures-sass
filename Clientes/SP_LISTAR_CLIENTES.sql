@@ -28,7 +28,7 @@ BEGIN
 
       IF v_count = 0 THEN
         SET pa_codigobd = 2;
-        SET pa_mensaje  = 'sin registro de clientes, desde MySQL';
+        SET pa_mensaje  = 'Sin registro de clientes, desde MySQL';
       ELSE
         SET pa_codigobd = 0;
         SET pa_mensaje  = 'Consulta correcta de clientes, desde MySQL';
