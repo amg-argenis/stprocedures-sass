@@ -1,5 +1,7 @@
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE SP_LISTAR_ORDENES(
+DROP PROCEDURE IF EXISTS SP_LISTAR_ORDENES$$
+
+CREATE PROCEDURE SP_LISTAR_ORDENES(
     IN  pa_tenantid  VARCHAR(255),
     OUT pa_codigobd  INT,
     OUT pa_mensaje   VARCHAR(255)
@@ -26,9 +28,9 @@ BEGIN
 
       IF v_count = 0 THEN
         SET pa_codigobd = 2;
-        SET pa_mensaje  = 'Sin registro de ordenes servicio, desde MySQL';
+        SET pa_mensaje  = 'Sin registros de orden servicio, desde MySQL';
       ELSE
-      SET pa_codigobd = 0;
+        SET pa_codigobd = 0;
         SET pa_mensaje  = 'Consulta correcta en orden servicio, desde MySQL';
 
         SELECT
@@ -44,8 +46,7 @@ BEGIN
             fechaEntrega
         FROM taordenservicio
         WHERE estado    <> 'ELIMINADO'
-        AND tenantId   = pa_tenantid;
-        
+        AND tenantId   = pa_tenantid;        
       END IF;
 
 END$$
