@@ -1,0 +1,14 @@
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class ProcesosRequest {
+  private String tenantid;
+  @NotBlank(message = "Campo requerido para la operacion, favor de verificar")
+  private String nombre;
+  @NotBlank(message = "Campo requerido para la operacion, favor de verificar")
+  private String descripcion;
+  @NotNull(message = "Campo requerido para la operacion, favor de verificar")
+  @DecimalMin(value = "1.0", message = "El precio debe ser mayor a 0.0, favor de verificar")
+  private BigDecimal preciounitario;
+}
