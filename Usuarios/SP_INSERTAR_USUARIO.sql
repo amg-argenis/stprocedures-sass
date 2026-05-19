@@ -61,8 +61,13 @@ BEGIN
         SET pa_mensaje  = 'Usuario insertado correctamente, desde MySQL';
 
         SELECT
-            idUsuario, tenantId, nombre, email,
-            rol, activo, createdAt
+            idUsuario, 
+            tenantId, 
+            nombre, 
+            email,
+            rol, 
+            activo, 
+            createdAt
         FROM tausuarios
         WHERE idUsuario = pa_idusuario;
 
