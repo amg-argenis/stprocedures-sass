@@ -1,6 +1,9 @@
 DELIMITER $$
 
-CREATE OR REPLACE PROCEDURE SP_ELIMINAR_ORDENSERVICIO(
+DROP PROCEDURE IF EXISTS SP_ELIMINAR_ORDENSERVICIO$$
+
+CREATE PROCEDURE SP_ELIMINAR_ORDENSERVICIO(
+    IN  pa_tenantid VARCHAR(36),
     IN  pa_idorden VARCHAR(255),
     IN  pa_folio   VARCHAR(255),
     OUT pa_codigobd INT,
@@ -26,7 +29,8 @@ BEGIN
     UPDATE taordenservicio
     SET estado = 'ELIMINADO'
     WHERE TRIM(idOrden) = TRIM(pa_idorden)
-      AND TRIM(folio)   = TRIM(pa_folio);
+      AND TRIM(folio)   = TRIM(pa_folio)
+      AND TRIM(tenantId) = TRIM(pa_tenantid);
 
     -- Verificar resultado SIN lanzar excepcion
     IF ROW_COUNT() = 0 THEN
